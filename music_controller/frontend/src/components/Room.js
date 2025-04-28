@@ -3,7 +3,6 @@ import { Grid, Button, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import CreateRoomPage from "./CreateRoomPage";
 
-
 export default class Room extends Component {
   constructor(props) {
     super(props);
