@@ -59,9 +59,24 @@ export default class CreateRoomPage extends Component {
     };
     fetch("/api/create-room", requestOptions)
       .then((response) => response.json())
-      .then((data) => this.props.history.push("/room/" + data.code));
+      .then((data) => {
+        // ✅ Now check if Spotify is authenticated
+        fetch("/spotify/is-authenticated")
+          .then((res) => res.json())
+          .then((authData) => {
+            if (!authData.status) {
+              fetch("/spotify/get-auth-url")
+                .then((res) => res.json())
+                .then((authUrl) => {
+                  window.location.replace(authUrl.url);
+                });
+            } else {
+              this.props.history.push("/room/" + data.code);
+            }
+          });
+      });
   }
-
+  
   handleUpdateButtonPressed() {
     const requestOptions = {
       method: "PATCH",
