@@ -104,24 +104,35 @@ export default class CreateRoomPage extends Component {
 
   renderCreateButtons() {
     return (
-      <Grid container spacing={1}>
-        <Grid item xs={12} align="center">
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={this.handleRoomButtonPressed}
-          >
-            Create A Room
-          </Button>
-        </Grid>
-        <Grid item xs={12} align="center">
-          <Button color="secondary" variant="contained" to="/" component={Link}>
-            Back
-          </Button>
+      <Grid item xs={12} align="center">
+        <Grid container spacing={2} justifyContent="center">
+          <Grid item>
+            <Button
+              color="secondary"
+              variant="contained"
+              to="/"
+              component={Link}
+              style={{ minWidth: "180px", fontSize: "1.1rem" }}
+            >
+              Back
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={this.handleRoomButtonPressed}
+              style={{ minWidth: "180px", fontSize: "1.1rem" }}
+            >
+              Create A Room
+            </Button>
+          </Grid>
         </Grid>
       </Grid>
     );
   }
+  
+  
 
   renderUpdateButtons() {
     return (
@@ -130,6 +141,7 @@ export default class CreateRoomPage extends Component {
           color="primary"
           variant="contained"
           onClick={this.handleUpdateButtonPressed}
+          style={{ minWidth: "180px", fontSize: "1.1rem" }}
         >
           Update Room
         </Button>
@@ -179,23 +191,24 @@ export default class CreateRoomPage extends Component {
               <div align="center">Guest Control of Playback State</div>
             </FormHelperText>
             <RadioGroup
-              row
-              defaultValue={this.props.guestCanPause.toString()}
-              onChange={this.handleGuestCanPauseChange}
-            >
-              <FormControlLabel
-                value="true"
-                control={<Radio color="primary" />}
-                label="Play/Pause"
-                labelPlacement="bottom"
-              />
-              <FormControlLabel
-                value="false"
-                control={<Radio color="secondary" />}
-                label="No Control"
-                labelPlacement="bottom"
-              />
-            </RadioGroup>
+      row
+      defaultValue={this.props.guestCanPause.toString()}
+      onChange={this.handleGuestCanPauseChange}
+      style={{ justifyContent: "center", display: "flex" }}
+    >
+      <FormControlLabel
+        value="true"
+        control={<Radio color="primary" />}
+        label="Play/Pause"
+        labelPlacement="bottom"
+      />
+      <FormControlLabel
+        value="false"
+        control={<Radio color="secondary" />}
+        label="No Control"
+        labelPlacement="bottom"
+      />
+    </RadioGroup>
           </FormControl>
         </Grid>
         <Grid item xs={12} align="center">

@@ -143,12 +143,36 @@ class SkipSong(APIView):
         votes = Vote.objects.filter(room=room, song_id=room.current_song)
         votes_needed = room.votes_to_skip
 
-        if self.request.session.session_key == room.host or len(votes) + 1 >= votes_needed:
+        user_vote = Vote.objects.filter(
+            user=self.request.session.session_key,
+            room=room,
+            song_id=room.current_song,
+        )
+
+        user_vote = Vote.objects.filter(
+            user=self.request.session.session_key,
+            room=room,
+            song_id=room.current_song,
+        )
+
+        if user_vote.exists():
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        # Save the new vote
+        vote = Vote(
+            user=self.request.session.session_key,
+            room=room,
+            song_id=room.current_song,
+        )
+        vote.save()
+
+        votes = Vote.objects.filter(room=room, song_id=room.current_song)
+        if len(votes) >= room.votes_to_skip:
             votes.delete()
             skip_song(room.host)
-        else:
-            vote = Vote(user=self.request.session.session_key,
-                        room=room, song_id=room.current_song)
-            vote.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+
 
         return Response({}, status.HTTP_204_NO_CONTENT)

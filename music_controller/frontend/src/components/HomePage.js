@@ -27,9 +27,10 @@ export default class HomePage extends Component {
 
   renderHomePage() {
     return (
+      <div className="centered-page scaled-ui">
       <Grid container spacing={3}>
         <Grid item xs={12} align="center">
-          <Typography variant="h3" compact="h3">
+          <Typography className="title-text">
             House Party
           </Typography>
         </Grid>
@@ -44,6 +45,7 @@ export default class HomePage extends Component {
           </ButtonGroup>
         </Grid>
       </Grid>
+      </div>
     );
   }
 
@@ -55,6 +57,7 @@ export default class HomePage extends Component {
 
   render() {
     return (
+      <div className="centered-page scaled-ui">
       <Router>
         <Switch>
           <Route
@@ -78,6 +81,7 @@ export default class HomePage extends Component {
           />
         </Switch>
       </Router>
+      </div>
     );
   }
 }

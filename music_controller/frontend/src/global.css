@@ -23,3 +23,27 @@ html, body, #root {
     letter-spacing: -0.5px;
   }
   
+  .centered-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  .scaled-ui * {
+    font-size: 1.5rem !important;
+  }
+  
+  .scaled-ui button {
+    padding: 12px 24px !important;
+    font-size: 1.1rem !important;
+  }
+  
+  .scaled-ui .title-text {
+    font-size: 3rem !important;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+  
