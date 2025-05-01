@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Grid, Button, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import CreateRoomPage from "./CreateRoomPage";
+import MusicPlayer from "./MusicPlayer";
 
 export default class Room extends Component {
   constructor(props) {
@@ -12,19 +13,31 @@ export default class Room extends Component {
       isHost: false,
       showSettings: false,
       spotifyAuthenticated: false,
+      song: {},
     };
     this.roomCode = this.props.match.params.roomCode;
+
     this.leaveButtonPressed = this.leaveButtonPressed.bind(this);
     this.updateShowSettings = this.updateShowSettings.bind(this);
     this.renderSettingsButton = this.renderSettingsButton.bind(this);
     this.renderSettings = this.renderSettings.bind(this);
     this.getRoomDetails = this.getRoomDetails.bind(this);
     this.authenticateSpotify = this.authenticateSpotify.bind(this);
+    this.getCurrentSong = this.getCurrentSong.bind(this);
+
     this.getRoomDetails();
   }
 
+  componentDidMount() {
+    this.interval = setInterval(this.getCurrentSong, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   getRoomDetails() {
-    return fetch("/api/get-room" + "?code=" + this.roomCode)
+    fetch("/api/get-room" + "?code=" + this.roomCode)
       .then((response) => {
         if (!response.ok) {
           this.props.leaveRoomCallback();
@@ -38,7 +51,7 @@ export default class Room extends Component {
           guestCanPause: data.guest_can_pause,
           isHost: data.is_host,
         });
-        if (this.state.isHost) {
+        if (data.is_host) {
           this.authenticateSpotify();
         }
       });
@@ -49,7 +62,6 @@ export default class Room extends Component {
       .then((response) => response.json())
       .then((data) => {
         this.setState({ spotifyAuthenticated: data.status });
-        console.log(data.status);
         if (!data.status) {
           fetch("/spotify/get-auth-url")
             .then((response) => response.json())
@@ -59,6 +71,20 @@ export default class Room extends Component {
         }
       });
   }
+
+  getCurrentSong() {
+    fetch("/spotify/current-song")
+      .then((response) => {
+        if (!response.ok || response.status === 204) {
+          return null;
+        }
+        return response.json();
+      })
+      .then((data) => {
+        this.setState({ song: data });
+      });
+  }
+
 
   leaveButtonPressed() {
     const requestOptions = {
@@ -120,38 +146,54 @@ export default class Room extends Component {
     if (this.state.showSettings) {
       return this.renderSettings();
     }
+
     return (
       <Grid container spacing={1}>
         <Grid item xs={12} align="center">
-          <Typography variant="h4" component="h4">
+          <Typography variant="h4" component="h4" className="title-text">
             Code: {this.roomCode}
           </Typography>
         </Grid>
-        <Grid item xs={12} align="center">
-          <Typography variant="h6" component="h6">
-            Votes: {this.state.votesToSkip}
-          </Typography>
-        </Grid>
-        <Grid item xs={12} align="center">
-          <Typography variant="h6" component="h6">
-            Guest Can Pause: {this.state.guestCanPause.toString()}
-          </Typography>
-        </Grid>
-        <Grid item xs={12} align="center">
-          <Typography variant="h6" component="h6">
-            Host: {this.state.isHost.toString()}
-          </Typography>
-        </Grid>
-        {this.state.isHost ? this.renderSettingsButton() : null}
-        <Grid item xs={12} align="center">
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={this.leaveButtonPressed}
-          >
-            Leave Room
-          </Button>
-        </Grid>
+        <MusicPlayer {...this.state.song} />
+<Grid item xs={12}>
+  <Grid container spacing={2} justifyContent="center">
+    <Grid item>
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={() => {
+          fetch("/spotify/skip", { method: "POST" });
+        }}
+        style={{ minWidth: "150px" }}
+      >
+        Vote to Skip
+      </Button>
+    </Grid>
+    {this.state.isHost ? (
+      <Grid item>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => this.updateShowSettings(true)}
+          style={{ minWidth: "150px" }}
+        >
+          Settings
+        </Button>
+      </Grid>
+    ) : null}
+    <Grid item>
+      <Button
+        variant="contained"
+        color="error"
+        onClick={this.leaveButtonPressed}
+        style={{ minWidth: "150px" }}
+      >
+        Leave Room
+      </Button>
+    </Grid>
+  </Grid>
+</Grid>
+
       </Grid>
     );
   }

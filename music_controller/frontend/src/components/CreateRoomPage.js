@@ -138,15 +138,16 @@ export default class CreateRoomPage extends Component {
   }
 
   render() {
-    const title = this.props.update ? "Update Room" : "Create a Room";
+  const title = this.props.update ? "Update Room" : "Create a Room";
 
-    return (
-      <Grid container spacing={1}>
+  return (
+    
+      <Grid container spacing={1} style={{ maxWidth: "800px" }}>
         <Grid item xs={12} align="center">
           <Collapse
-            in={this.state.errorMsg != "" || this.state.successMsg != ""}
+            in={this.state.errorMsg !== "" || this.state.successMsg !== ""}
           >
-            {this.state.successMsg != "" ? (
+            {this.state.successMsg !== "" ? (
               <Alert
                 severity="success"
                 onClose={() => {
@@ -168,7 +169,7 @@ export default class CreateRoomPage extends Component {
           </Collapse>
         </Grid>
         <Grid item xs={12} align="center">
-          <Typography component="h4" variant="h4">
+          <Typography component="h4" variant="h4" className="title-text">
             {title}
           </Typography>
         </Grid>
@@ -218,6 +219,7 @@ export default class CreateRoomPage extends Component {
           ? this.renderUpdateButtons()
           : this.renderCreateButtons()}
       </Grid>
-    );
-  }
+    
+  );
+}
 }
