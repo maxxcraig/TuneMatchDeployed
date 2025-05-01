@@ -176,3 +176,22 @@ class SkipSong(APIView):
 
 
         return Response({}, status.HTTP_204_NO_CONTENT)
+    
+class UserProfileSummary(APIView):
+    def get(self, request, format=None):
+        session_key = request.session.session_key
+
+        # Get user profile
+        profile = execute_spotify_api_request(session_key, 'me', override_base=True)
+        display_name = profile.get('display_name', 'Spotify User')
+        image_url = profile.get('images', [{}])[0].get('url', None)
+
+        # Get top artist
+        top = execute_spotify_api_request(session_key, 'me/top/artists?limit=1&time_range=long_term', override_base=True)
+        top_artist = top.get('items', [{}])[0].get('name', 'Unknown')
+
+        return Response({
+            'display_name': display_name,
+            'image_url': image_url,
+            'top_artist': top_artist,
+        }, status=200)

@@ -10,6 +10,7 @@ export default class Room extends Component {
     this.state = {
       votesToSkip: 2,
       guestCanPause: false,
+      userInfo: null,
       isHost: false,
       showSettings: false,
       spotifyAuthenticated: false,
@@ -35,6 +36,17 @@ export default class Room extends Component {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
+
+  componentDidMount() {
+    this.interval = setInterval(this.getCurrentSong, 1000);
+  
+    fetch("/spotify/user-profile")
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ userInfo: data });
+      });
+  }
+  
 
   getRoomDetails() {
     fetch("/api/get-room" + "?code=" + this.roomCode)
@@ -146,55 +158,83 @@ export default class Room extends Component {
     if (this.state.showSettings) {
       return this.renderSettings();
     }
-
+  
     return (
       <Grid container spacing={1}>
+        {/* Top-left user info */}
+        {this.state.userInfo && (
+          <Grid
+            item
+            style={{ position: "absolute", top: 20, left: 20 }}
+          >
+            <Grid container direction="row" alignItems="center" spacing={1}>
+              <Grid item>
+                <img
+                  src={this.state.userInfo.image_url}
+                  alt="Profile"
+                  height="40"
+                  style={{ borderRadius: "50%" }}
+                />
+              </Grid>
+              <Grid item>
+                <Typography variant="subtitle1" style={{ fontWeight: "bold" }}>
+                  {this.state.userInfo.display_name}
+                </Typography>
+                <Typography variant="caption">
+                  Top Artist: {this.state.userInfo.top_artist}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
+  
         <Grid item xs={12} align="center">
           <Typography variant="h4" component="h4" className="title-text">
             Code: {this.roomCode}
           </Typography>
         </Grid>
+  
         <MusicPlayer {...this.state.song} />
-<Grid item xs={12}>
-  <Grid container spacing={2} justifyContent="center">
-    <Grid item>
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={() => {
-          fetch("/spotify/skip", { method: "POST" });
-        }}
-        style={{ minWidth: "150px" }}
-      >
-        Vote to Skip
-      </Button>
-    </Grid>
-    {this.state.isHost ? (
-      <Grid item>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => this.updateShowSettings(true)}
-          style={{ minWidth: "150px" }}
-        >
-          Settings
-        </Button>
-      </Grid>
-    ) : null}
-    <Grid item>
-      <Button
-        variant="contained"
-        color="error"
-        onClick={this.leaveButtonPressed}
-        style={{ minWidth: "150px" }}
-      >
-        Leave Room
-      </Button>
-    </Grid>
-  </Grid>
-</Grid>
-
+  
+        <Grid item xs={12}>
+          <Grid container spacing={2} justifyContent="center">
+            <Grid item>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => {
+                  fetch("/spotify/skip", { method: "POST" });
+                }}
+                style={{ minWidth: "150px" }}
+              >
+                Vote to Skip
+              </Button>
+            </Grid>
+            {this.state.isHost ? (
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => this.updateShowSettings(true)}
+                  style={{ minWidth: "150px" }}
+                >
+                  Settings
+                </Button>
+              </Grid>
+            ) : null}
+            <Grid item>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={this.leaveButtonPressed}
+                style={{ minWidth: "150px" }}
+              >
+                Leave Room
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid>
       </Grid>
     );
   }
-}
+}  
