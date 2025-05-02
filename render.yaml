@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: tunematch-app
+    env: python
+    buildCommand: |
+      cd music_controller/frontend
+      npm install --legacy-peer-deps
+      npm run build
+      cp -r build/* ../static/
+      cd ../..
+      pip install -r requirements.txt
+      python3 music_controller/manage.py collectstatic --noinput
+    startCommand: gunicorn music_controller.music_controller.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: music_controller.music_controller.settings
+      - key: PYTHON_VERSION
+        value: 3.11
