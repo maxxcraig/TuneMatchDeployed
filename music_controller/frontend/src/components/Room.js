@@ -161,31 +161,21 @@ export default class Room extends Component {
   
     return (
       <Grid container spacing={1}>
-        {/* Top-left user info */}
+        {/* Top-right profile image only */}
         {this.state.userInfo && (
-          <Grid
-            item
-            style={{ position: "absolute", top: 20, left: 20 }}
-          >
-            <Grid container direction="row" alignItems="center" spacing={1}>
-              <Grid item>
-                <img
-                  src={this.state.userInfo.image_url}
-                  alt="Profile"
-                  height="40"
-                  style={{ borderRadius: "50%" }}
-                />
-              </Grid>
-              <Grid item>
-                <Typography variant="subtitle1" style={{ fontWeight: "bold" }}>
-                  {this.state.userInfo.display_name}
-                </Typography>
-                <Typography variant="caption">
-                  Top Artist: {this.state.userInfo.top_artist}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
+          <img
+            src={this.state.userInfo.image_url}
+            alt="Profile"
+            style={{
+              position: "absolute",
+              top: 20,
+              right: 20,
+              height: "70px", 
+              width: "70px",
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+          />
         )}
   
         <Grid item xs={12} align="center">
@@ -237,4 +227,9 @@ export default class Room extends Component {
       </Grid>
     );
   }
-}  
+  
+
+
+}
+  
+    

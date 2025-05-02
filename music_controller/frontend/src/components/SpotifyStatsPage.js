@@ -15,7 +15,7 @@ export default function SpotifyStatsPage() {
         return res.json();
       })
       .then((data) => {
-        console.log("User profile:", data); // ✅ check browser console
+        console.log("User profile:", data);
         setUserData(data);
         setLoading(false);
       })
@@ -42,14 +42,46 @@ export default function SpotifyStatsPage() {
     );
   }
 
+  const backgroundImage = userData.top_artist_image;
+
   return (
-    <Grid container direction="column" alignItems="center" spacing={2} style={{ marginTop: "50px" }}>
+    <Grid
+      container
+      direction="column"
+      alignItems="center"
+      justifyContent="flex-start"
+      style={{
+        minHeight: "100vh",
+        paddingTop: "40px",
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backdropFilter: "blur(4px)",
+        color: "white", // ensures text is readable
+        textShadow: "1px 1px 4px rgba(0,0,0,0.8)",
+      }}
+      spacing={3}
+    >
       <Grid item>
-        <Avatar src={userData.image_url} alt="Profile" sx={{ width: 100, height: 100 }} />
+        <Avatar
+          src={userData.image_url}
+          alt="Profile"
+          sx={{ width: 150, height: 150 }}
+        />
       </Grid>
+
       <Grid item>
-        <Typography variant="h5">{userData.display_name}</Typography>
-        <Typography variant="subtitle1">Top Artist: {userData.top_artist}</Typography>
+        <Typography variant="h4" fontWeight="bold">
+          {userData.display_name}
+        </Typography>
+      </Grid>
+
+      <Grid item style={{ textAlign: "center" }}>
+        <Typography variant="h6">Top Artist: {userData.top_artist}</Typography>
+        <Typography variant="h6">Top Song: {userData.top_song}</Typography>
+        <Typography variant="h6">Minutes Listened To Top Song: {userData.minutes_listened}</Typography>
+        <Typography variant="h6">Top Genre: {userData.top_genre}</Typography>
       </Grid>
     </Grid>
   );

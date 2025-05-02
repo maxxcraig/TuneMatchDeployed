@@ -11,7 +11,8 @@ from .models import Vote
 
 class AuthURL(APIView):
     def get(self, request, fornat=None):
-        scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing'
+        scopes =  'user-read-playback-state user-modify-playback-state user-read-currently-playing user-top-read'
+
 
         url = Request('GET', 'https://accounts.spotify.com/authorize', params={
             'scope': scopes,
@@ -187,11 +188,31 @@ class UserProfileSummary(APIView):
         image_url = profile.get('images', [{}])[0].get('url', None)
 
         # Get top artist
-        top = execute_spotify_api_request(session_key, 'me/top/artists?limit=1&time_range=long_term', override_base=True)
-        top_artist = top.get('items', [{}])[0].get('name', 'Unknown')
+        # Get top artist and image
+        top_artists = execute_spotify_api_request(session_key, 'me/top/artists?limit=1&time_range=long_term', override_base=True)
+        top_artist_item = top_artists.get('items', [{}])[0]
+        top_artist = top_artist_item.get('name', 'Unknown')
+        top_artist_image = top_artist_item.get('images', [{}])[0].get('url', None)
+
+
+        # Get top song
+        top_tracks = execute_spotify_api_request(session_key, 'me/top/tracks?limit=1&time_range=long_term', override_base=True)
+        top_song = top_tracks.get('items', [{}])[0].get('name', 'Unknown')
+
+        # Get total minutes listened (approximate using top 50 tracks' durations)
+        all_tracks = execute_spotify_api_request(session_key, 'me/top/tracks?limit=50&time_range=long_term', override_base=True)
+        total_ms = sum(track.get('duration_ms', 0) for track in all_tracks.get('items', []))
+        minutes_listened = round(total_ms / (1000 * 60), 1)
+
+        # Get top genre (from top artist)
+        top_genre = top_artists.get('items', [{}])[0].get('genres', ['Unknown'])[0]
 
         return Response({
             'display_name': display_name,
             'image_url': image_url,
             'top_artist': top_artist,
+            'top_song': top_song,
+            'minutes_listened': minutes_listened,
+            'top_genre': top_genre,
+            'top_artist_image': top_artist_image
         }, status=200)
