@@ -10,10 +10,10 @@ services:
       cd ../..
       pip install -r requirements.txt
       python3 music_controller/manage.py collectstatic --noinput
-    startCommand: gunicorn music_controller.music_controller.wsgi:application
+    startCommand: gunicorn core.wsgi:application
     workingDirectory: music_controller
     envVars:
       - key: DJANGO_SETTINGS_MODULE
-        value: music_controller.settings
+        value: core.settings
       - key: PYTHON_VERSION
         value: 3.11
