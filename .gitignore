@@ -4,5 +4,3 @@ __pycache__/
 node_modules/
 .env
 .DS_Store
-
-music_controller/spotify/credentials.py
