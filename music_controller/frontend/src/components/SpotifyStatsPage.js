@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography, Avatar, CircularProgress } from "@mui/material";
+import { Grid, Typography, Avatar, CircularProgress, Button } from "@mui/material";
+import { useHistory } from "react-router-dom";
 
 export default function SpotifyStatsPage() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const history = useHistory();
 
   useEffect(() => {
     fetch("/spotify/user-profile")
@@ -63,6 +65,24 @@ export default function SpotifyStatsPage() {
       }}
       spacing={3}
     >
+      {/* Back Button */}
+      <Grid item style={{ position: "absolute", top: "20px", left: "20px" }}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => history.push("/")}
+          style={{
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            color: "white",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+            },
+          }}
+        >
+          Back
+        </Button>
+      </Grid>
+
       <Grid item>
         <Avatar
           src={userData.image_url}
